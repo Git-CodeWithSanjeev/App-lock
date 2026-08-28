@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">App Lock</string>
+    <string name="accessibility_service_description">Used exclusively to detect when locked applications are launched in order to immediately present the lock screen before the app contents appear.</string>
+    <string name="notification_channel_name">App Lock Protection Service</string>
+    <string name="notification_channel_desc">Monitors foreground apps to protect locked applications.</string>
+    <string name="notification_title">App Lock is Active</string>
+    <string name="notification_text">Protecting selected apps in background</string>
+</resources>
