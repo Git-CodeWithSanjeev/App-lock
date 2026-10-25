@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../theme/app_colors.dart';
+import '../theme/app_theme.dart';
 
-/// One UI-styled search text field with clear button.
+/// One UI Capsule Search Bar for filtering applications and list contents.
 class SearchField extends StatelessWidget {
   final TextEditingController controller;
   final ValueChanged<String>? onChanged;
@@ -22,44 +22,43 @@ class SearchField extends StatelessWidget {
     return Container(
       height: 48,
       decoration: BoxDecoration(
-        color: AppColors.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.outlineVariant),
+        color: AppTheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppTheme.outlineVariant, width: 1),
       ),
       child: TextField(
         controller: controller,
         onChanged: onChanged,
-        style: GoogleFonts.manrope(
-          fontSize: 14.5,
-          fontWeight: FontWeight.w600,
-          color: AppColors.onSurface,
-        ),
+        style: GoogleFonts.manrope(fontSize: 14, color: AppTheme.onSurface),
         decoration: InputDecoration(
+          border: InputBorder.none,
           hintText: hintText,
           hintStyle: GoogleFonts.manrope(
-            fontSize: 14.5,
-            color: AppColors.mutedSteel,
+            fontSize: 14,
+            color: AppTheme.mutedSteel,
           ),
           prefixIcon: const Icon(
             Icons.search_rounded,
-            color: AppColors.mutedSteel,
-            size: 22,
+            color: AppTheme.mutedSteel,
+            size: 20,
           ),
           suffixIcon: controller.text.isNotEmpty
               ? IconButton(
-                  icon: const Icon(Icons.close_rounded, size: 18),
-                  color: AppColors.mutedSteel,
+                  icon: const Icon(Icons.clear_rounded, size: 18),
+                  color: AppTheme.mutedSteel,
                   onPressed: () {
                     controller.clear();
-                    if (onChanged != null) onChanged!('');
-                    if (onClear != null) onClear!();
+                    onChanged?.call('');
+                    onClear?.call();
                   },
                 )
               : null,
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          contentPadding: const EdgeInsets.symmetric(vertical: 12),
         ),
       ),
     );
   }
 }
+
+/// Backward compatibility alias
+typedef ApplicationSearch = SearchField;

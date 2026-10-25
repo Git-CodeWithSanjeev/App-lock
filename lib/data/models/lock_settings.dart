@@ -19,8 +19,8 @@ class LockSettings {
     this.pinHash = AppConstants.defaultPin,
     bool recentAppsPrivacy = true,
     bool uninstallProtection = false,
-  })  : _recentAppsPrivacy = recentAppsPrivacy,
-        _uninstallProtection = uninstallProtection;
+  }) : _recentAppsPrivacy = recentAppsPrivacy,
+       _uninstallProtection = uninstallProtection;
 
   LockSettings copyWith({
     bool? protectionEnabled,

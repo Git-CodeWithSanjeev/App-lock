@@ -156,7 +156,14 @@ class AppLockForegroundService : Service() {
                 } catch (e: Exception) {
                     Log.e(TAG, "Error in usage stats polling: ${e.message}")
                 }
-                delay(POLLING_INTERVAL_MS)
+                // When 0ms AccessibilityService is actively capturing window transitions,
+                // relax UsageStats polling to save battery and CPU on entry-level/low-end devices.
+                val interval = if (AppLockAccessibilityService.isServiceRunning) {
+                    1500L
+                } else {
+                    POLLING_INTERVAL_MS
+                }
+                delay(interval)
             }
         }
     }

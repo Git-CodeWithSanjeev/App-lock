@@ -5,7 +5,7 @@ import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 import 'package:get/get.dart';
 import 'package:installed_apps/installed_apps.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../core/constants/storage_keys.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../data/platform/app_lock_channel.dart';
 import '../../../data/repositories/app_lock_repository.dart';
 
@@ -39,8 +39,7 @@ class LockOverlayController extends GetxController {
       await AppLockRepository.instance.init();
       final prefs = await SharedPreferences.getInstance();
       await prefs.reload();
-      final cachedTarget =
-          prefs.getString(StorageKeys.lastLockedPackage) ?? '';
+      final cachedTarget = prefs.getString(StorageKeys.lastLockedPackage) ?? '';
       if (cachedTarget.isNotEmpty && cachedTarget != targetPackage.value) {
         updateTargetApp(cachedTarget);
       }

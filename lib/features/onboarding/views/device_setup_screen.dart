@@ -86,11 +86,14 @@ class _DeviceSetupScreenState extends State<DeviceSetupScreen>
       ),
       body: _isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: AppTheme.primary))
+              child: CircularProgressIndicator(color: AppTheme.primary),
+            )
           : SafeArea(
               child: SingleChildScrollView(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 16,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -202,7 +205,9 @@ class _DeviceSetupScreenState extends State<DeviceSetupScreen>
 
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 14, vertical: 10),
+                              horizontal: 14,
+                              vertical: 10,
+                            ),
                             decoration: BoxDecoration(
                               color: _isOptimizedIgnored
                                   ? AppTheme.surfaceContainerLowest
@@ -290,18 +295,21 @@ class _DeviceSetupScreenState extends State<DeviceSetupScreen>
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16)),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
                         ),
                         onPressed: () async {
-                          await SamsungChannel
-                              .requestIgnoreBatteryOptimization();
+                          await SamsungChannel.requestIgnoreBatteryOptimization();
                         },
-                        icon: const Icon(Icons.battery_charging_full_rounded,
-                            size: 22),
+                        icon: const Icon(
+                          Icons.battery_charging_full_rounded,
+                          size: 22,
+                        ),
                         label: Text(
                           'Open Samsung Battery Settings',
                           style: GoogleFonts.manrope(
-                              fontWeight: FontWeight.w700),
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                     ),
@@ -312,22 +320,28 @@ class _DeviceSetupScreenState extends State<DeviceSetupScreen>
                       width: double.infinity,
                       child: OutlinedButton.icon(
                         style: OutlinedButton.styleFrom(
-                          side:
-                              const BorderSide(color: AppTheme.outlineVariant),
+                          side: const BorderSide(
+                            color: AppTheme.outlineVariant,
+                          ),
                           padding: const EdgeInsets.symmetric(vertical: 15),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16)),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
                         ),
                         onPressed: () async {
                           await SamsungChannel.openSamsungAutoRunSettings();
                         },
-                        icon: const Icon(Icons.settings_suggest_outlined,
-                            size: 20, color: AppTheme.onSurface),
+                        icon: const Icon(
+                          Icons.settings_suggest_outlined,
+                          size: 20,
+                          color: AppTheme.onSurface,
+                        ),
                         label: Text(
                           'Open Auto-Run / Device Care',
                           style: GoogleFonts.manrope(
-                              fontWeight: FontWeight.w700,
-                              color: AppTheme.onSurface),
+                            fontWeight: FontWeight.w700,
+                            color: AppTheme.onSurface,
+                          ),
                         ),
                       ),
                     ),
@@ -346,15 +360,17 @@ class _DeviceSetupScreenState extends State<DeviceSetupScreen>
                               : AppTheme.onSurface,
                           padding: const EdgeInsets.symmetric(vertical: 15),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16)),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
                         ),
                         onPressed: _finishGuide,
                         child: Text(
                           _isOptimizedIgnored
                               ? 'Done • Return to Dashboard'
                               : 'I Have Configured This • Continue',
-                          style:
-                              GoogleFonts.manrope(fontWeight: FontWeight.w700),
+                          style: GoogleFonts.manrope(
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                     ),
@@ -366,10 +382,11 @@ class _DeviceSetupScreenState extends State<DeviceSetupScreen>
     );
   }
 
-  Widget _buildStepCard(
-      {required String step,
-      required String title,
-      required String description}) {
+  Widget _buildStepCard({
+    required String step,
+    required String title,
+    required String description,
+  }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),

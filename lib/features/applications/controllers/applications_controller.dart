@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import '../../../data/repositories/app_lock_repository.dart';
-import '../models/application_filter.dart';
 
 /// GetX Controller managing installed applications list, search,
 /// category/filter state, and app loading state.

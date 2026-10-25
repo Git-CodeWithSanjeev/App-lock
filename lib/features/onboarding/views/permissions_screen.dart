@@ -103,14 +103,17 @@ class _PermissionsScreenState extends State<PermissionsScreen>
       ),
       body: _isChecking
           ? const Center(
-              child: CircularProgressIndicator(color: AppTheme.primary))
+              child: CircularProgressIndicator(color: AppTheme.primary),
+            )
           : SafeArea(
               child: Column(
                 children: [
                   Expanded(
                     child: SingleChildScrollView(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 16),
+                        horizontal: 20,
+                        vertical: 16,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -173,12 +176,17 @@ class _PermissionsScreenState extends State<PermissionsScreen>
 
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 16),
+                      horizontal: 20,
+                      vertical: 16,
+                    ),
                     decoration: const BoxDecoration(
                       color: AppTheme.surfaceContainerLowest,
                       border: Border(
-                          top: BorderSide(
-                              color: AppTheme.outlineVariant, width: 1)),
+                        top: BorderSide(
+                          color: AppTheme.outlineVariant,
+                          width: 1,
+                        ),
+                      ),
                     ),
                     child: SizedBox(
                       width: double.infinity,
@@ -226,8 +234,9 @@ class _PermissionsScreenState extends State<PermissionsScreen>
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(18),
       decoration: AppTheme.cardDecoration(
-        borderColor:
-            isGranted ? AppTheme.emeraldBorder : AppTheme.outlineVariant,
+        borderColor: isGranted
+            ? AppTheme.emeraldBorder
+            : AppTheme.outlineVariant,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -263,8 +272,11 @@ class _PermissionsScreenState extends State<PermissionsScreen>
                 ),
               ),
               if (isGranted)
-                const Icon(Icons.check_circle_rounded,
-                    color: AppTheme.primaryContainer, size: 22),
+                const Icon(
+                  Icons.check_circle_rounded,
+                  color: AppTheme.primaryContainer,
+                  size: 22,
+                ),
             ],
           ),
           const SizedBox(height: 12),
@@ -282,7 +294,9 @@ class _PermissionsScreenState extends State<PermissionsScreen>
             child: isGranted
                 ? Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 4),
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: AppTheme.emeraldBg,
                       borderRadius: BorderRadius.circular(8),
@@ -301,9 +315,12 @@ class _PermissionsScreenState extends State<PermissionsScreen>
                     style: OutlinedButton.styleFrom(
                       side: const BorderSide(color: AppTheme.outlineVariant),
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 10),
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     onPressed: onRequest,
                     child: Text(

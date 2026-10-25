@@ -27,10 +27,7 @@ class _MainNavigationState extends State<MainNavigation> {
     return Scaffold(
       body: IndexedStack(
         index: _currentIndex,
-        children: const [
-          HomeScreen(),
-          SettingsScreen(),
-        ],
+        children: const [HomeScreen(), SettingsScreen()],
       ),
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
@@ -50,15 +47,30 @@ class _MainNavigationState extends State<MainNavigation> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildNavItem(0, Icons.grid_view_outlined, Icons.grid_view_rounded, 'Apps'),
-            _buildNavItem(1, Icons.settings_outlined, Icons.settings_rounded, 'Settings'),
+            _buildNavItem(
+              0,
+              Icons.grid_view_outlined,
+              Icons.grid_view_rounded,
+              'Apps',
+            ),
+            _buildNavItem(
+              1,
+              Icons.settings_outlined,
+              Icons.settings_rounded,
+              'Settings',
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildNavItem(int index, IconData outlineIcon, IconData filledIcon, String label) {
+  Widget _buildNavItem(
+    int index,
+    IconData outlineIcon,
+    IconData filledIcon,
+    String label,
+  ) {
     final isSelected = _currentIndex == index;
     final color = isSelected ? AppTheme.primary : AppTheme.secondary;
 
@@ -74,11 +86,7 @@ class _MainNavigationState extends State<MainNavigation> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              isSelected ? filledIcon : outlineIcon,
-              color: color,
-              size: 24,
-            ),
+            Icon(isSelected ? filledIcon : outlineIcon, color: color, size: 24),
             const SizedBox(height: 4),
             Text(
               label,

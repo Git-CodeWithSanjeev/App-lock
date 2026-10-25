@@ -37,7 +37,8 @@ class _AuthenticationGateState extends State<AuthenticationGate>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    final relockTimeoutMs = AppLockRepository.instance.settings.value.relockTimeoutMs;
+    final relockTimeoutMs =
+        AppLockRepository.instance.settings.value.relockTimeoutMs;
     _authCtrl.handleAppLifecycleState(state, relockTimeoutMs);
   }
 

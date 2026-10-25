@@ -37,6 +37,9 @@ object NativeLockManager {
     // Cache of unlocked packages and the timestamp when unlocked
     private val unlockedSessions = HashMap<String, Long>()
 
+    // Cache of packages and the timestamp when the user moved away from them to background
+    private val lastLeftTimes = HashMap<String, Long>()
+
     private fun getPrefs(context: Context): SharedPreferences {
         return context.getSharedPreferences(NativeBridgeConstants.PREFS_NAME, Context.MODE_PRIVATE)
     }
@@ -205,10 +208,18 @@ object NativeLockManager {
 
         val activeUnlocked = currentlyUnlockedForegroundPackage
         if (activeUnlocked != null && (newPackage != activeUnlocked || isRecents || isLauncher)) {
-            // Immediate re-lock whenever user leaves the protected application
-            unlockedSessions.remove(activeUnlocked)
+            val timeoutMs = getRelockTimeoutMs(context)
+            if (timeoutMs == 0L) {
+                // Immediate re-lock policy (0ms): invalidate unlock session immediately
+                unlockedSessions.remove(activeUnlocked)
+                lastLeftTimes.remove(activeUnlocked)
+                Log.d(TAG, "Relocking $activeUnlocked immediately upon foreground exit")
+            } else {
+                // Configured relock timeout (>0ms): record timestamp when app entered background
+                lastLeftTimes[activeUnlocked] = System.currentTimeMillis()
+                Log.d(TAG, "Recorded background exit for $activeUnlocked with relockTimeout=${timeoutMs}ms")
+            }
             currentlyUnlockedForegroundPackage = null
-            Log.d(TAG, "Relocking $activeUnlocked immediately upon foreground exit (newPackage=$newPackage, isRecents=$isRecents)")
         }
 
         // If user navigated away from the locked target app, handle overlay state cleanly
@@ -275,13 +286,34 @@ object NativeLockManager {
 
         // Check timeout grace period
         val timeoutMs = getRelockTimeoutMs(context)
-        val lastUnlocked = unlockedSessions[packageName]
+        if (unlockedSessions.containsKey(packageName)) {
+            if (timeoutMs == 0L) {
+                // Configured policy is immediate lock on background
+                unlockedSessions.remove(packageName)
+                lastLeftTimes.remove(packageName)
+                return true
+            }
 
-        if (lastUnlocked != null) {
-            val elapsed = System.currentTimeMillis() - lastUnlocked
-            if (timeoutMs > 0 && elapsed < timeoutMs) {
-                // Still within unlock grace period
+            val leftTime = lastLeftTimes[packageName]
+            if (leftTime == null) {
+                // Package was unlocked and user never left it
+                currentlyUnlockedForegroundPackage = packageName
                 return false
+            }
+
+            val elapsed = System.currentTimeMillis() - leftTime
+            if (elapsed < timeoutMs) {
+                // Returned within configured timeout! Restore active session
+                currentlyUnlockedForegroundPackage = packageName
+                lastLeftTimes.remove(packageName)
+                Log.d(TAG, "Restored unlocked session for $packageName (elapsed=${elapsed}ms < timeout=${timeoutMs}ms)")
+                return false
+            } else {
+                // Timeout elapsed! Lock application
+                unlockedSessions.remove(packageName)
+                lastLeftTimes.remove(packageName)
+                Log.d(TAG, "Relock timeout expired for $packageName (elapsed=${elapsed}ms >= timeout=${timeoutMs}ms)")
+                return true
             }
         }
 
@@ -293,6 +325,7 @@ object NativeLockManager {
      */
     fun markAppUnlocked(context: Context, packageName: String) {
         unlockedSessions[packageName] = System.currentTimeMillis()
+        lastLeftTimes.remove(packageName)
         currentlyUnlockedForegroundPackage = packageName
         activeOverlayPackage = null
         isOverlayVisible = false
@@ -304,6 +337,7 @@ object NativeLockManager {
      */
     fun clearUnlockedSession(packageName: String) {
         unlockedSessions.remove(packageName)
+        lastLeftTimes.remove(packageName)
         if (currentlyUnlockedForegroundPackage == packageName) {
             currentlyUnlockedForegroundPackage = null
         }
@@ -316,6 +350,7 @@ object NativeLockManager {
      */
     fun clearAllUnlockedSessions() {
         unlockedSessions.clear()
+        lastLeftTimes.clear()
         currentlyUnlockedForegroundPackage = null
     }
 }

@@ -3,11 +3,10 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/app_lock_switch.dart';
+import '../../../core/widgets/pin_keypad.dart';
 import '../../../data/repositories/app_lock_repository.dart';
 import '../../authentication/views/create_pin_screen.dart';
 import '../controllers/settings_controller.dart';
-import 'widgets/permission_tile.dart';
-import 'widgets/settings_section.dart';
 
 /// Minimal Samsung One UI–inspired Settings Screen.
 /// All options are functional and linked directly to repository/system channels.
@@ -96,7 +95,9 @@ class _SettingsScreenState extends State<SettingsScreen>
                   children: [
                     ListTile(
                       contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 18, vertical: 4),
+                        horizontal: 18,
+                        vertical: 4,
+                      ),
                       leading: _buildIconCircle(Icons.dialpad_rounded),
                       title: Text(
                         'Master PIN',
@@ -147,13 +148,16 @@ class _SettingsScreenState extends State<SettingsScreen>
                       },
                     ),
                     const Divider(
-                        height: 1,
-                        color: AppTheme.outlineVariant,
-                        indent: 70),
+                      height: 1,
+                      color: AppTheme.outlineVariant,
+                      indent: 70,
+                    ),
 
                     ListTile(
                       contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 18, vertical: 4),
+                        horizontal: 18,
+                        vertical: 4,
+                      ),
                       leading: _buildIconCircle(Icons.fingerprint_rounded),
                       title: Text(
                         'Biometric Unlock',
@@ -258,7 +262,9 @@ class _SettingsScreenState extends State<SettingsScreen>
                   children: [
                     ListTile(
                       contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 18, vertical: 6),
+                        horizontal: 18,
+                        vertical: 6,
+                      ),
                       leading: _buildIconCircle(Icons.visibility_off_rounded),
                       title: Text(
                         'Recent Apps Privacy',
@@ -282,9 +288,10 @@ class _SettingsScreenState extends State<SettingsScreen>
                       ),
                     ),
                     const Divider(
-                        height: 1,
-                        color: AppTheme.outlineVariant,
-                        indent: 70),
+                      height: 1,
+                      color: AppTheme.outlineVariant,
+                      indent: 70,
+                    ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(18, 12, 18, 14),
                       child: Container(
@@ -297,8 +304,11 @@ class _SettingsScreenState extends State<SettingsScreen>
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Icon(Icons.info_outline_rounded,
-                                color: AppTheme.primary, size: 18),
+                            const Icon(
+                              Icons.info_outline_rounded,
+                              color: AppTheme.primary,
+                              size: 18,
+                            ),
                             const SizedBox(width: 10),
                             Expanded(
                               child: Column(
@@ -331,13 +341,16 @@ class _SettingsScreenState extends State<SettingsScreen>
                       ),
                     ),
                     const Divider(
-                        height: 1,
-                        color: AppTheme.outlineVariant,
-                        indent: 70),
+                      height: 1,
+                      color: AppTheme.outlineVariant,
+                      indent: 70,
+                    ),
 
                     ListTile(
                       contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 18, vertical: 6),
+                        horizontal: 18,
+                        vertical: 6,
+                      ),
                       leading: _buildIconCircle(Icons.shield_outlined),
                       title: Text(
                         'Uninstall Protection',
@@ -379,9 +392,10 @@ class _SettingsScreenState extends State<SettingsScreen>
                       onRequest: _ctrl.requestUsageAccess,
                     ),
                     const Divider(
-                        height: 1,
-                        color: AppTheme.outlineVariant,
-                        indent: 70),
+                      height: 1,
+                      color: AppTheme.outlineVariant,
+                      indent: 70,
+                    ),
                     PermissionTile(
                       icon: Icons.layers_outlined,
                       title: 'Display Over Other Apps',
@@ -390,9 +404,10 @@ class _SettingsScreenState extends State<SettingsScreen>
                       onRequest: _ctrl.requestOverlay,
                     ),
                     const Divider(
-                        height: 1,
-                        color: AppTheme.outlineVariant,
-                        indent: 70),
+                      height: 1,
+                      color: AppTheme.outlineVariant,
+                      indent: 70,
+                    ),
                     PermissionTile(
                       icon: Icons.accessibility_new_rounded,
                       title: 'Instant Lock (Accessibility)',
@@ -401,15 +416,19 @@ class _SettingsScreenState extends State<SettingsScreen>
                       onRequest: _ctrl.openAccessibilitySettings,
                     ),
                     const Divider(
-                        height: 1,
-                        color: AppTheme.outlineVariant,
-                        indent: 70),
+                      height: 1,
+                      color: AppTheme.outlineVariant,
+                      indent: 70,
+                    ),
 
                     ListTile(
                       contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 18, vertical: 4),
-                      leading:
-                          _buildIconCircle(Icons.running_with_errors_rounded),
+                        horizontal: 18,
+                        vertical: 4,
+                      ),
+                      leading: _buildIconCircle(
+                        Icons.running_with_errors_rounded,
+                      ),
                       title: Text(
                         'Background Service',
                         style: GoogleFonts.manrope(
@@ -530,7 +549,9 @@ class _SettingsScreenState extends State<SettingsScreen>
   }
 
   Future<void> _handleUninstallProtectionToggle(
-      bool enable, AppLockRepository repo) async {
+    bool enable,
+    AppLockRepository repo,
+  ) async {
     if (enable) {
       if (!_ctrl.isAccessibility.value) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -547,8 +568,9 @@ class _SettingsScreenState extends State<SettingsScreen>
       await _ctrl.updateUninstallProtection(true);
     } else {
       // Must prompt for PIN verification before disabling!
-      final authenticated =
-          await _promptPinVerification('Disable Uninstall Protection');
+      final authenticated = await _promptPinVerification(
+        'Disable Uninstall Protection',
+      );
       if (authenticated) {
         await _ctrl.updateUninstallProtection(false);
         if (mounted) {
@@ -571,6 +593,7 @@ class _SettingsScreenState extends State<SettingsScreen>
     final repo = AppLockRepository.instance;
     String pin = '';
     String? error;
+    bool isVerifying = false;
 
     final result = await showModalBottomSheet<bool>(
       context: context,
@@ -579,28 +602,54 @@ class _SettingsScreenState extends State<SettingsScreen>
       builder: (ctx) {
         return StatefulBuilder(
           builder: (context, setModalState) {
-            void onDigit(String d) {
-              if (pin.length >= 6) return;
-              setModalState(() {
-                pin += d;
-                error = null;
-              });
+            void verifyAndSubmit() {
+              if (isVerifying) return;
+              isVerifying = true;
               if (pin.length == 6) {
                 if (repo.verifyPin(pin)) {
+                  pin = '';
                   Navigator.of(context).pop(true);
                 } else {
+                  isVerifying = false;
                   setModalState(() {
                     error = 'Incorrect PIN';
                     pin = '';
                   });
                 }
+              } else {
+                isVerifying = false;
+                setModalState(() {
+                  error = 'Enter 6-digit PIN';
+                });
+              }
+            }
+
+            void onDigit(String d) {
+              if (isVerifying || pin.length >= 6) return;
+              setModalState(() {
+                pin += d;
+                error = null;
+              });
+              if (pin.length == 6) {
+                verifyAndSubmit();
               }
             }
 
             void onBackspace() {
+              if (isVerifying) return;
               if (pin.isNotEmpty) {
                 setModalState(() {
                   pin = pin.substring(0, pin.length - 1);
+                  error = null;
+                });
+              }
+            }
+
+            void onClear() {
+              if (isVerifying) return;
+              if (pin.isNotEmpty) {
+                setModalState(() {
+                  pin = '';
                   error = null;
                 });
               }
@@ -637,122 +686,27 @@ class _SettingsScreenState extends State<SettingsScreen>
                     error ?? 'Enter Master PIN to confirm',
                     style: GoogleFonts.manrope(
                       fontSize: 13,
-                      fontWeight:
-                          error != null ? FontWeight.w700 : FontWeight.w500,
-                      color:
-                          error != null ? AppTheme.error : AppTheme.mutedSteel,
+                      fontWeight: error != null
+                          ? FontWeight.w700
+                          : FontWeight.w500,
+                      color: error != null
+                          ? AppTheme.error
+                          : AppTheme.mutedSteel,
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(6, (index) {
-                      final isFilled = index < pin.length;
-                      return Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 6),
-                        width: 12,
-                        height: 12,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color:
-                              isFilled ? AppTheme.primary : Colors.transparent,
-                          border: Border.all(
-                            color: isFilled
-                                ? AppTheme.primary
-                                : AppTheme.outlineLight,
-                            width: 2,
-                          ),
-                        ),
-                      );
-                    }),
+                  PinDotsIndicator(
+                    enteredLength: pin.length,
+                    hasError: error != null,
                   ),
-                  const SizedBox(height: 24),
-                  ...[
-                    ['1', '2', '3'],
-                    ['4', '5', '6'],
-                    ['7', '8', '9']
-                  ].map((row) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: Row(
-                        children: row.map((d) {
-                          return Expanded(
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 6),
-                              child: InkWell(
-                                onTap: () => onDigit(d),
-                                borderRadius: BorderRadius.circular(16),
-                                child: Container(
-                                  height: 52,
-                                  decoration: BoxDecoration(
-                                    color: AppTheme.surfaceContainerLow,
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    d,
-                                    style: GoogleFonts.manrope(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700,
-                                      color: AppTheme.onSurface,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                    );
-                  }),
-                  Row(
-                    children: [
-                      const Expanded(child: SizedBox()),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 6),
-                          child: InkWell(
-                            onTap: () => onDigit('0'),
-                            borderRadius: BorderRadius.circular(16),
-                            child: Container(
-                              height: 52,
-                              decoration: BoxDecoration(
-                                color: AppTheme.surfaceContainerLow,
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                '0',
-                                style: GoogleFonts.manrope(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppTheme.onSurface,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 6),
-                          child: InkWell(
-                            onTap: onBackspace,
-                            borderRadius: BorderRadius.circular(16),
-                            child: Container(
-                              height: 52,
-                              alignment: Alignment.center,
-                              child: const Icon(
-                                Icons.backspace_outlined,
-                                color: AppTheme.onSurface,
-                                size: 22,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                  const SizedBox(height: 20),
+                  PinKeypad(
+                    onDigitPressed: onDigit,
+                    onBackspacePressed: onBackspace,
+                    onClearPressed: onClear,
+                    onOkPressed: verifyAndSubmit,
+                    hasDigitsEntered: pin.isNotEmpty,
+                    okActiveColor: AppTheme.primary,
                   ),
                 ],
               ),
@@ -763,5 +717,133 @@ class _SettingsScreenState extends State<SettingsScreen>
     );
 
     return result == true;
+  }
+}
+
+/// One UI Settings Section with labeled header and rounded container card.
+class SettingsSection extends StatelessWidget {
+  final String title;
+  final Widget child;
+
+  const SettingsSection({super.key, required this.title, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 6, bottom: 8),
+          child: Text(
+            title,
+            style: GoogleFonts.manrope(
+              fontSize: 11.5,
+              fontWeight: FontWeight.w800,
+              color: AppTheme.mutedSteel,
+              letterSpacing: 0.8,
+            ),
+          ),
+        ),
+        Container(
+          decoration: AppTheme.cardDecoration(borderRadius: 24),
+          child: child,
+        ),
+      ],
+    );
+  }
+}
+
+/// Permission Tile displaying permission status with grant/check badge.
+class PermissionTile extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final bool isGranted;
+  final VoidCallback onRequest;
+
+  const PermissionTile({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.isGranted,
+    required this.onRequest,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 4),
+      leading: Container(
+        width: 38,
+        height: 38,
+        decoration: BoxDecoration(
+          color: AppTheme.surfaceContainerLow,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Icon(icon, color: AppTheme.primary, size: 20),
+      ),
+      title: Text(
+        title,
+        style: GoogleFonts.manrope(
+          fontSize: 15,
+          fontWeight: FontWeight.w700,
+          color: AppTheme.onSurface,
+        ),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: GoogleFonts.manrope(fontSize: 12, color: AppTheme.mutedSteel),
+      ),
+      trailing: isGranted
+          ? Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: const Color(0xFFE8F5E9),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.check_circle_rounded,
+                    color: Color(0xFF2E7D32),
+                    size: 14,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    'Granted',
+                    style: GoogleFonts.manrope(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFF2E7D32),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : InkWell(
+              onTap: onRequest,
+              borderRadius: BorderRadius.circular(10),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: AppTheme.blueBg,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  'Grant',
+                  style: GoogleFonts.manrope(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: AppTheme.primary,
+                  ),
+                ),
+              ),
+            ),
+    );
   }
 }

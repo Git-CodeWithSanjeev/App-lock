@@ -43,3 +43,9 @@ class ApplicationInfo {
 
 /// Backward compatibility alias
 typedef AppInfoItem = ApplicationInfo;
+
+/// Authoritative application filtering state/type.
+enum ApplicationFilter { all, locked }
+
+/// Backward compatibility alias
+typedef AppFilterType = ApplicationFilter;

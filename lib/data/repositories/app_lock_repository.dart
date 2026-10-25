@@ -20,9 +20,14 @@ class AppLockRepository {
 
   SharedPreferences? _prefs;
 
-  final ValueNotifier<Set<String>> lockedPackages = ValueNotifier<Set<String>>({});
-  final ValueNotifier<LockSettings> settings = ValueNotifier<LockSettings>(const LockSettings());
-  final ValueNotifier<List<AppInfoItem>> installedApps = ValueNotifier<List<AppInfoItem>>([]);
+  final ValueNotifier<Set<String>> lockedPackages = ValueNotifier<Set<String>>(
+    {},
+  );
+  final ValueNotifier<LockSettings> settings = ValueNotifier<LockSettings>(
+    const LockSettings(),
+  );
+  final ValueNotifier<List<AppInfoItem>> installedApps =
+      ValueNotifier<List<AppInfoItem>>([]);
   final ValueNotifier<bool> isServiceRunning = ValueNotifier<bool>(false);
   final ValueNotifier<bool> isLoadingApps = ValueNotifier<bool>(false);
 
@@ -34,15 +39,19 @@ class AppLockRepository {
     _prefs = await SharedPreferences.getInstance();
     await _prefs?.reload();
 
-    final savedList = _prefs?.getStringList(AppConstants.keyLockedPackages) ?? [];
+    final savedList =
+        _prefs?.getStringList(AppConstants.keyLockedPackages) ?? [];
     lockedPackages.value = savedList.toSet();
 
-    final protection = _prefs?.getBool(AppConstants.keyProtectionEnabled) ?? true;
+    final protection =
+        _prefs?.getBool(AppConstants.keyProtectionEnabled) ?? true;
     final biometric = _prefs?.getBool(AppConstants.keyBiometricEnabled) ?? true;
     final timeout = _prefs?.getInt(AppConstants.keyRelockTimeoutMs) ?? 0;
-    final pin = _prefs?.getString(AppConstants.keyPinHash) ?? AppConstants.defaultPin;
+    final pin =
+        _prefs?.getString(AppConstants.keyPinHash) ?? AppConstants.defaultPin;
     final privacy = _prefs?.getBool(AppConstants.keyRecentAppsPrivacy) ?? true;
-    final uninstallProt = _prefs?.getBool(AppConstants.keyUninstallProtection) ?? false;
+    final uninstallProt =
+        _prefs?.getBool(AppConstants.keyUninstallProtection) ?? false;
 
     settings.value = LockSettings(
       protectionEnabled: protection,
@@ -105,7 +114,10 @@ class AppLockRepository {
     }
     lockedPackages.value = current;
 
-    await _prefs?.setStringList(AppConstants.keyLockedPackages, current.toList());
+    await _prefs?.setStringList(
+      AppConstants.keyLockedPackages,
+      current.toList(),
+    );
     await AppLockChannel.syncLockedPackages(current.toList());
 
     if (lock && settings.value.protectionEnabled) {
@@ -132,7 +144,10 @@ class AppLockRepository {
     }
     lockedPackages.value = current;
 
-    await _prefs?.setStringList(AppConstants.keyLockedPackages, current.toList());
+    await _prefs?.setStringList(
+      AppConstants.keyLockedPackages,
+      current.toList(),
+    );
     await AppLockChannel.syncLockedPackages(current.toList());
 
     // Update in-memory installed apps list
@@ -230,20 +245,23 @@ class AppLockRepository {
         }
 
         // Instant Knox / Secure Folder detection without serial channel lag
-        final isKnox = pkg.startsWith('com.sec.knox.') ||
+        final isKnox =
+            pkg.startsWith('com.sec.knox.') ||
             pkg.startsWith('com.samsung.knox.') ||
             pkg.contains('.knox.') ||
             pkg.startsWith('sec_container_');
 
-        items.add(AppInfoItem(
-          name: name,
-          packageName: pkg,
-          iconBytes: app.icon,
-          versionName: app.versionName,
-          isSystemApp: false,
-          isKnoxProtected: isKnox,
-          isLocked: currentLocked.contains(pkg),
-        ));
+        items.add(
+          AppInfoItem(
+            name: name,
+            packageName: pkg,
+            iconBytes: app.icon,
+            versionName: app.versionName,
+            isSystemApp: false,
+            isKnoxProtected: isKnox,
+            isLocked: currentLocked.contains(pkg),
+          ),
+        );
       }
 
       // Sort alphabetically with locked apps first

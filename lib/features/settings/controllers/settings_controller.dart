@@ -1,14 +1,12 @@
 import 'package:get/get.dart';
 import '../../../data/platform/app_lock_channel.dart';
 import '../../../data/repositories/app_lock_repository.dart';
-import '../../privacy/services/recent_apps_privacy_service.dart';
 
 /// GetX Controller managing settings preferences and system permission states.
 class SettingsController extends GetxController {
   static SettingsController get to => Get.find<SettingsController>();
 
   final AppLockRepository _repo = AppLockRepository.instance;
-  final RecentAppsPrivacyService _privacyService = RecentAppsPrivacyService();
 
   // Reactive settings object mirrored from repo
   late final Rx<LockSettings> settings;
@@ -108,7 +106,6 @@ class SettingsController extends GetxController {
   /// Toggles Recent Apps Privacy (FLAG_SECURE + task preview hiding).
   Future<void> updateRecentAppsPrivacy(bool enabled) async {
     recentAppsPrivacy.value = enabled;
-    await _privacyService.setRecentAppsPrivacy(enabled);
     await _repo.updateRecentAppsPrivacy(enabled);
   }
 

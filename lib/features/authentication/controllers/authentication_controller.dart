@@ -3,22 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/constants/app_constants.dart';
-import '../../../core/constants/storage_keys.dart';
+import '../../../data/platform/app_lock_channel.dart';
 import '../../../data/repositories/app_lock_repository.dart';
-import '../services/biometric_service.dart';
 
 /// Manages PIN keypad input, verification, reset flows, and biometric authentication.
 class AuthenticationController extends GetxController {
-  static AuthenticationController get to => Get.find<AuthenticationController>();
+  static AuthenticationController get to =>
+      Get.find<AuthenticationController>();
 
   final AppLockRepository _repo = AppLockRepository.instance;
-  final BiometricService _biometricService;
-
-  AuthenticationController({BiometricService? biometricService})
-      : _biometricService = biometricService ?? BiometricService();
 
   final RxBool isSelfAuthenticated = false.obs;
-  int _lastAuthenticatedTime = 0;
   DateTime? _lastPausedTime;
 
   final RxString enteredPin = ''.obs;
@@ -70,14 +65,36 @@ class AuthenticationController extends GetxController {
           }
         } catch (_) {}
       }
-      final biometricEnabled = prefs.getBool(StorageKeys.biometricEnabled) ?? true;
-      final hwAvailable = await _biometricService.isBiometricAvailable();
+      final biometricEnabled =
+          prefs.getBool(StorageKeys.biometricEnabled) ?? true;
+      final hwAvailable = await AppLockChannel.isBiometricAvailable();
 
       canUseBiometrics.value = hwAvailable && biometricEnabled;
     } catch (_) {}
   }
 
+  void resetSession() {
+    _errorClearTimer?.cancel();
+    _errorClearTimer = null;
+    enteredPin.value = '';
+    hasError.value = false;
+    errorMessage.value = null;
+    isResetPinMode.value = false;
+    resetStep.value = 1;
+    resetNewPin.value = '';
+    resetMessage.value = null;
+  }
+
   void onDigit(String digit, {VoidCallback? onComplete}) {
+    _errorClearTimer?.cancel();
+    _errorClearTimer = null;
+
+    if (hasError.value) {
+      enteredPin.value = '';
+      hasError.value = false;
+      errorMessage.value = null;
+    }
+
     final now = DateTime.now().millisecondsSinceEpoch;
     if (now - _lastKeyPressTime < 100) return;
     _lastKeyPressTime = now;
@@ -94,14 +111,30 @@ class AuthenticationController extends GetxController {
   }
 
   void onBackspace() {
+    _errorClearTimer?.cancel();
+    _errorClearTimer = null;
+
+    if (hasError.value) {
+      hasError.value = false;
+      errorMessage.value = null;
+      enteredPin.value = '';
+      return;
+    }
+
     if (enteredPin.value.isNotEmpty) {
       hasError.value = false;
       errorMessage.value = null;
-      enteredPin.value = enteredPin.value.substring(0, enteredPin.value.length - 1);
+      enteredPin.value = enteredPin.value.substring(
+        0,
+        enteredPin.value.length - 1,
+      );
     }
   }
 
   void onClear() {
+    _errorClearTimer?.cancel();
+    _errorClearTimer = null;
+
     if (enteredPin.value.isNotEmpty) {
       hasError.value = false;
       errorMessage.value = null;
@@ -157,34 +190,35 @@ class AuthenticationController extends GetxController {
   }
 
   void authenticateSelf() {
-    _lastAuthenticatedTime = DateTime.now().millisecondsSinceEpoch;
+    _lastPausedTime = null;
     isSelfAuthenticated.value = true;
-    enteredPin.value = '';
-    hasError.value = false;
-    errorMessage.value = null;
+    resetSession();
   }
 
   void lockSelf() {
     isSelfAuthenticated.value = false;
-    enteredPin.value = '';
+    _lastPausedTime = null;
+    resetSession();
   }
 
   void handleAppLifecycleState(AppLifecycleState state, int relockTimeoutMs) {
-    if (state == AppLifecycleState.paused || state == AppLifecycleState.hidden) {
-      _lastPausedTime = DateTime.now();
-    } else if (state == AppLifecycleState.resumed) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.hidden) {
       if (isSelfAuthenticated.value) {
-        final now = DateTime.now().millisecondsSinceEpoch;
-        if (now - _lastAuthenticatedTime < 2000) return;
-
-        final elapsed = _lastPausedTime == null
-            ? 0
-            : DateTime.now().difference(_lastPausedTime!).inMilliseconds;
+        _lastPausedTime = DateTime.now();
+      }
+    } else if (state == AppLifecycleState.resumed) {
+      if (isSelfAuthenticated.value && _lastPausedTime != null) {
+        final elapsed = DateTime.now()
+            .difference(_lastPausedTime!)
+            .inMilliseconds;
 
         if (relockTimeoutMs == 0 || elapsed >= relockTimeoutMs) {
           isSelfAuthenticated.value = false;
+          resetSession();
         }
       }
+      _lastPausedTime = null;
     }
   }
 
@@ -193,13 +227,15 @@ class AuthenticationController extends GetxController {
     required String appName,
     VoidCallback? onSuccess,
   }) async {
-    if (!canUseBiometrics.value || isAuthenticatingBiometric.value || isResetPinMode.value) {
+    if (!canUseBiometrics.value ||
+        isAuthenticatingBiometric.value ||
+        isResetPinMode.value) {
       return false;
     }
 
     isAuthenticatingBiometric.value = true;
     try {
-      final success = await _biometricService.triggerBiometricUnlock(
+      final success = await AppLockChannel.triggerBiometricUnlock(
         packageName: packageName,
         appName: appName,
       );

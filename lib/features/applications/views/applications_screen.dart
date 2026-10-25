@@ -7,10 +7,7 @@ import '../../../data/repositories/app_lock_repository.dart';
 import '../../app_lock/controllers/app_lock_controller.dart';
 import '../../authentication/views/create_pin_screen.dart';
 import '../controllers/applications_controller.dart';
-import '../models/application_filter.dart';
-import 'widgets/application_filter_bar.dart';
-import 'widgets/application_search.dart';
-import 'widgets/application_tile.dart';
+import '../../../core/widgets/search_field.dart';
 
 /// Minimal Samsung One UI–inspired primary screen ("Apps" Tab).
 /// Flow: Select App -> Enable Lock -> Authenticate with PIN/Biometric -> Unlock.
@@ -88,8 +85,9 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
             final currentFilter = _appsCtrl.currentFilter.value;
 
             final filteredApps = _appsCtrl.filteredApps;
-            final lockedCount =
-                apps.where((a) => lockedPackages.contains(a.packageName)).length;
+            final lockedCount = apps
+                .where((a) => lockedPackages.contains(a.packageName))
+                .length;
 
             return CustomScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
@@ -129,7 +127,9 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
                             ),
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 4),
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
                                 color: isProtectionActive
                                     ? AppTheme.blueBg
@@ -169,9 +169,10 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
 
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 18, vertical: 16),
-                          decoration:
-                              AppTheme.cardDecoration(borderRadius: 24),
+                            horizontal: 18,
+                            vertical: 16,
+                          ),
+                          decoration: AppTheme.cardDecoration(borderRadius: 24),
                           child: Row(
                             children: [
                               Container(
@@ -196,8 +197,7 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
                               const SizedBox(width: 14),
                               Expanded(
                                 child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       isProtectionActive
@@ -239,19 +239,23 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) => const CreatePinScreen(
-                                      isInitialSetup: false),
+                                    isInitialSetup: false,
+                                  ),
                                 ),
                               );
                             },
                             borderRadius: BorderRadius.circular(20),
                             child: Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 14),
+                                horizontal: 16,
+                                vertical: 14,
+                              ),
                               decoration: BoxDecoration(
                                 color: const Color(0xFFFFFBEB),
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
-                                    color: const Color(0xFFFDE68A)),
+                                  color: const Color(0xFFFDE68A),
+                                ),
                               ),
                               child: Row(
                                 children: [
@@ -260,8 +264,7 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
                                     height: 36,
                                     decoration: BoxDecoration(
                                       color: const Color(0xFFFEF3C7),
-                                      borderRadius:
-                                          BorderRadius.circular(10),
+                                      borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: const Icon(
                                       Icons.vpn_key_rounded,
@@ -354,8 +357,8 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
                                 isLoading
                                     ? Icons.hourglass_top_rounded
                                     : (currentFilter == ApplicationFilter.locked
-                                        ? Icons.lock_open_rounded
-                                        : Icons.search_off_rounded),
+                                          ? Icons.lock_open_rounded
+                                          : Icons.search_off_rounded),
                                 color: AppTheme.mutedSteel,
                                 size: 28,
                               ),
@@ -365,10 +368,10 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
                               isLoading
                                   ? 'Scanning applications...'
                                   : (currentFilter == ApplicationFilter.locked
-                                      ? 'No locked applications'
-                                      : (apps.isEmpty
-                                          ? 'No applications loaded'
-                                          : 'No matching applications')),
+                                        ? 'No locked applications'
+                                        : (apps.isEmpty
+                                              ? 'No applications loaded'
+                                              : 'No matching applications')),
                               style: GoogleFonts.manrope(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w700,
@@ -380,10 +383,10 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
                               isLoading
                                   ? 'Please wait while installed apps are detected.'
                                   : (currentFilter == ApplicationFilter.locked
-                                      ? 'Toggle the switch beside any app to lock it.'
-                                      : (apps.isEmpty
-                                          ? 'Pull down to refresh installed applications.'
-                                          : 'Check your search query or clear the filter.')),
+                                        ? 'Toggle the switch beside any app to lock it.'
+                                        : (apps.isEmpty
+                                              ? 'Pull down to refresh installed applications.'
+                                              : 'Check your search query or clear the filter.')),
                               textAlign: TextAlign.center,
                               style: GoogleFonts.manrope(
                                 fontSize: 13,
@@ -399,24 +402,21 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
                   SliverPadding(
                     padding: const EdgeInsets.only(bottom: 24),
                     sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          final app = filteredApps[index];
-                          final isLocked =
-                              lockedPackages.contains(app.packageName);
-                          final displayApp = app.isLocked == isLocked
-                              ? app
-                              : app.copyWith(isLocked: isLocked);
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final app = filteredApps[index];
+                        final isLocked = lockedPackages.contains(
+                          app.packageName,
+                        );
+                        final displayApp = app.isLocked == isLocked
+                            ? app
+                            : app.copyWith(isLocked: isLocked);
 
-                          return ApplicationTile(
-                            key: ValueKey(app.packageName),
-                            app: displayApp,
-                            onToggle: (bool val) =>
-                                _handleToggle(app, val),
-                          );
-                        },
-                        childCount: filteredApps.length,
-                      ),
+                        return ApplicationTile(
+                          key: ValueKey(app.packageName),
+                          app: displayApp,
+                          onToggle: (bool val) => _handleToggle(app, val),
+                        );
+                      }, childCount: filteredApps.length),
                     ),
                   ),
               ],
@@ -430,3 +430,219 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
 
 /// Backward compatibility alias
 typedef HomeScreen = ApplicationsScreen;
+
+/// One UI Filter Bar containing selection pills with counts.
+class ApplicationFilterBar extends StatelessWidget {
+  final ApplicationFilter currentFilter;
+  final int allCount;
+  final int lockedCount;
+  final ValueChanged<ApplicationFilter> onFilterChanged;
+
+  const ApplicationFilterBar({
+    super.key,
+    required this.currentFilter,
+    required this.allCount,
+    required this.lockedCount,
+    required this.onFilterChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        _buildFilterPill(
+          label: 'All',
+          count: allCount,
+          isSelected: currentFilter == ApplicationFilter.all,
+          onTap: () => onFilterChanged(ApplicationFilter.all),
+        ),
+        const SizedBox(width: 8),
+        _buildFilterPill(
+          label: 'Locked',
+          count: lockedCount,
+          isSelected: currentFilter == ApplicationFilter.locked,
+          onTap: () => onFilterChanged(ApplicationFilter.locked),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFilterPill({
+    required String label,
+    required int count,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppTheme.primary
+              : AppTheme.surfaceContainerLowest,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected ? AppTheme.primary : AppTheme.outlineVariant,
+          ),
+          boxShadow: isSelected ? AppTheme.cardShadow : null,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              label,
+              style: GoogleFonts.manrope(
+                fontSize: 12.5,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                color: isSelected ? Colors.white : AppTheme.onSurface,
+              ),
+            ),
+            const SizedBox(width: 6),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? Colors.white.withAlpha(50)
+                    : AppTheme.surfaceContainerLow,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                '$count',
+                style: GoogleFonts.manrope(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: isSelected ? Colors.white : AppTheme.mutedSteel,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Clean Samsung One UI–inspired application list tile.
+class ApplicationTile extends StatelessWidget {
+  final ApplicationInfo app;
+  final ValueChanged<bool> onToggle;
+
+  const ApplicationTile({super.key, required this.app, required this.onToggle});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: AppTheme.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: app.isLocked
+              ? AppTheme.primary.withAlpha(50)
+              : AppTheme.outlineVariant,
+          width: 1.0,
+        ),
+        boxShadow: AppTheme.cardShadow,
+      ),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(13),
+            child: SizedBox(
+              width: 44,
+              height: 44,
+              child: app.iconBytes != null
+                  ? Image.memory(
+                      app.iconBytes!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          _buildFallbackIcon(),
+                    )
+                  : _buildFallbackIcon(),
+            ),
+          ),
+          const SizedBox(width: 14),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        app.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.manrope(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          color: AppTheme.onSurface,
+                          letterSpacing: -0.2,
+                        ),
+                      ),
+                    ),
+                    if (app.isKnoxProtected) ...[
+                      const SizedBox(width: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppTheme.blueBg,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          'KNOX',
+                          style: GoogleFonts.manrope(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w800,
+                            color: AppTheme.primary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  app.packageName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.manrope(
+                    fontSize: 12,
+                    color: AppTheme.mutedSteel,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+
+          AppLockSwitch(value: app.isLocked, onChanged: onToggle),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFallbackIcon() {
+    return Container(
+      color: AppTheme.surfaceContainerLow,
+      alignment: Alignment.center,
+      child: const Icon(
+        Icons.android_rounded,
+        color: AppTheme.mutedSteel,
+        size: 24,
+      ),
+    );
+  }
+}
+
+/// Backward compatibility alias
+typedef AppListTile = ApplicationTile;

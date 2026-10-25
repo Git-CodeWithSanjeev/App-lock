@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/app_colors.dart';
+import '../theme/app_theme.dart';
 
 /// Minimal Samsung One UI–inspired switch toggle for locking/protecting apps.
 class AppLockSwitch extends StatelessWidget {
@@ -25,7 +25,7 @@ class AppLockSwitch extends StatelessWidget {
         padding: const EdgeInsets.all(3),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
-          color: value ? AppColors.primary : const Color(0xFFE2E5EA),
+          color: value ? AppTheme.primary : const Color(0xFFE2E5EA),
         ),
         alignment: value ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
@@ -48,5 +48,6 @@ class AppLockSwitch extends StatelessWidget {
   }
 }
 
-/// Backward compatibility alias
+/// Backward compatibility aliases
 typedef LockSwitch = AppLockSwitch;
+typedef ToggleSwitch = AppLockSwitch;
